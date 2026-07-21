@@ -39,7 +39,6 @@ telco-customer-churn-analytics/
 │   ├── chart_images/                        # Matplotlib/Seaborn/Plotly chart exports
 │   └── dashboard_images/                    # Power BI dashboard page screenshots
 │
-├── requirements.txt
 └── README.md                                 # Phase 8: workflow + consolidated insights
 ```
 
@@ -101,7 +100,7 @@ Cleaned CSV se teen normalized tables banayi aur load ki:
 4-page dark/light themed dashboard, `churn_predictions_full` table (ML model ka output) par based:
 
 **Page 1 — Overview**
-![Dashboard Page 1](images/dashboard_images/dashboard_image1.png)
+![Dashboard Page 1](https://github.com/codebyavneesh/telco-customer-churn-analytics/blob/main/churn-prediction-retentional-analysis/images/dashboard_images/dashboard_image1.png)
 - 7K Total Customers, 2K Churned, Churn Rate 0.27
 - Total MRR ₹456.12K, MRR at Risk ₹137.01K
 - Month-to-month contract 55.02% customers ke saath sabse bada segment
@@ -109,19 +108,19 @@ Cleaned CSV se teen normalized tables banayi aur load ki:
 - Churn split: 73.46% No vs 26.54% Yes
 
 **Page 2 — Churn Rate Drivers**
-![Dashboard Page 2](images/dashboard_images/dashboard_image2.png)
+![Dashboard Page 2](https://github.com/codebyavneesh/telco-customer-churn-analytics/blob/main/churn-prediction-retentional-analysis/images/dashboard_images/dashboard_image2.png)
 - Month-to-month contract churn rate 0.43, jabki Two-year sirf 0.03 — sabse strong churn driver
 - SeniorCitizen = Yes churn rate 0.42, jabki No sirf 0.24 — almost double
 - Electronic check payment method churn rate sabse zyada (47%)
 - Fiber optic internet service churn rate 0.42 — sabse high internet-service segment
 
 **Page 3 — Segmentation**
-![Dashboard Page 3](images/dashboard_images/dashboard_image3.png)
+![Dashboard Page 3](https://github.com/codebyavneesh/telco-customer-churn-analytics/blob/main/churn-prediction-retentional-analysis/images/dashboard_images/dashboard_image3.png)
 - MonthlyCharges ₹81–100 bucket mein sabse zyada customers (1764) — high-charge zone, jahan churn risk bhi zyada
 - Contract distribution aur tenure-wise customer spread ka detailed breakdown
 
 **Page 4 — Risk & Financial Impact (ML-driven)**
-![Dashboard Page 4](images/dashboard_images/dashboard_image4.png)
+![Dashboard Page 4](https://github.com/codebyavneesh/telco-customer-churn-analytics/blob/main/churn-prediction-retentional-analysis/images/dashboard_images/dashboard_image4.png)
 - Model se nikli churn probability ko business metrics mein convert kiya: **₹137.01K MRR at Risk**, 2K High Risk Customers, 0.30 Revenue Loss %
 - Fiber optic customers ka MRR at Risk sabse zyada (₹0.11M)
 - Customer-level table mein individual churn probability bhi visible — sirf aggregate nahi, per-customer actionable output
@@ -154,3 +153,22 @@ Cleaned CSV se teen normalized tables banayi aur load ki:
 6. `notebooks/02_feature_engineering_ml.ipynb` run karo — Phase 5 (`churn_predictions.csv` generate hoga)
 7. `notebooks/03_plotly_interactive_viz.ipynb` run karo — Phase 6
 8. `powerbi/telco_churn_dashboard.pbix` open karo, `churn_predictions.csv` ko data source ke roop mein refresh karo — Phase 7
+
+---
+
+## 🛠️ Skills Used
+
+- **Python** — Pandas, NumPy (data cleaning, feature engineering)
+- **Data Visualization** — Matplotlib, Seaborn (EDA), Plotly (interactive visuals)
+- **SQL** — MySQL (schema design, CTEs, window functions, business queries)
+- **Machine Learning** — scikit-learn (churn prediction model, feature importance)
+- **Business Intelligence** — Power BI, DAX (multi-page dashboard, measures)
+- **Version Control** — Git, GitHub
+
+---
+
+## 👤 Author
+
+**Avneesh**
+GitHub: [@codebyavneesh](https://github.com/codebyavneesh)
+LinkedIn: [linkedin.com/in/codebyavneesh](https://linkedin.com/in/codebyavneesh)
