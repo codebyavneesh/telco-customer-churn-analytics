@@ -19,7 +19,7 @@ telco-customer-churn-analytics/
 │
 ├── scripts/
 │   ├── data_cleaning.py                     # Phase 1: nulls, dtypes, duplicates
-│   └── load_to_mysql.py                     # Phase 2: cleaned CSV → MySQL tables
+│   └── schema.sql                     # Phase 2: cleaned CSV → MySQL tables
 │
 ├── sql/
 │   └── analysis_queries.sql                 # Phase 3: 15-20 business queries
