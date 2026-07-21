@@ -1,6 +1,6 @@
 # Telco Customer Churn Analytics
 
-End-to-end churn analysis pipeline — raw customer data se lekar MySQL, SQL analysis, EDA, ML-based churn prediction, Plotly interactive visuals, aur ek Power BI business dashboard tak.
+End-to-end churn analysis pipeline — from raw customer data through MySQL, SQL analysis, EDA, ML-based churn prediction, Plotly interactive visuals, to a Power BI business dashboard.
 
 ---
 
@@ -13,9 +13,9 @@ telco-customer-churn-analytics/
 │   ├── raw/
 │   │   └── telco_churn_raw.csv              # original Kaggle download, untouched
 │   ├── cleaned/
-│   │   └── telco_churn_cleaned.csv          # Phase 1 output → MySQL me load
+│   │   └── telco_churn_cleaned.csv          # Phase 1 output → loaded into MySQL
 │   └── model_output/
-│       └── churn_predictions.csv            # Phase 5 output → Power BI me import
+│       └── churn_predictions.csv            # Phase 5 output → imported into Power BI
 │
 ├── scripts/
 │   ├── data_cleaning.py                     # Phase 1: nulls, dtypes, duplicates
@@ -46,18 +46,18 @@ telco-customer-churn-analytics/
 
 ## 🧩 Phase 1 — Data Acquisition & Cleaning
 
-- Raw CSV load karke `.info()`, `.isnull().sum()`, `.duplicated().sum()` se profile kiya
-- `TotalCharges` ko `pd.to_numeric(errors='coerce')` se numeric convert kiya — blanks NaN ban gaye
-- `SeniorCitizen` column ko 0/1 se Yes/No mein convert kiya, taaki baaki Yes/No columns ke saath consistent rahe
-- `customerID` unique verify kiya, exact duplicate rows nahi mile
+- Loaded the raw CSV and profiled it with `.info()`, `.isnull().sum()`, `.duplicated().sum()`
+- Converted `TotalCharges` to numeric using `pd.to_numeric(errors='coerce')` — blanks became NaN
+- Converted the `SeniorCitizen` column from 0/1 to Yes/No, for consistency with the other Yes/No columns
+- Verified `customerID` uniqueness — no exact duplicate rows found
 
-**Key Insight:** 11 customers (0.16%) ka `TotalCharges` blank tha, aur un sabka `tenure = 0` tha. Ye random missingness nahi thi — logical thi (naye customers, abhi tak bill generate hi nahi hua). Isliye mean se impute karne ke bajaye, `TotalCharges = 0` set kiya — business-logic-driven decision, jo mean-imputation se zyada defensible hai.
+**Key Insight:** 11 customers (0.16%) had a blank `TotalCharges` value, and all of them had `tenure = 0`. This wasn't random missingness — it was logical (new customers who hadn't been billed yet). So instead of mean imputation, `TotalCharges` was set to 0 — a business-logic-driven decision that's more defensible than mean imputation.
 
 ---
 
 ## 🗄️ Phase 2 — MySQL Schema Design & Load
 
-Cleaned CSV se teen normalized tables banayi aur load ki:
+Built three normalized tables from the cleaned CSV and loaded them:
 - `customers`
 - `services`
 - `billing`
@@ -66,80 +66,80 @@ Cleaned CSV se teen normalized tables banayi aur load ki:
 
 ## 🔍 Phase 3 — SQL Analysis
 
-`sql/analysis_queries.sql` mein 15–20 business-focused SQL queries — CTEs, window functions, aggregations — jaise contract-wise churn rate, tenure buckets ke hisab se revenue, payment method-wise risk, etc.
+`sql/analysis_queries.sql` contains 15–20 business-focused SQL queries — CTEs, window functions, aggregations — covering things like contract-wise churn rate, revenue by tenure bucket, and payment-method-wise risk.
 
 ---
 
 ## 📊 Phase 4 — Python EDA (Matplotlib/Seaborn)
 
-`notebooks/01_eda_matplotlib_seaborn.ipynb` mein exploratory analysis:
-- Contract type, tenure, monthly charges, aur internet service ke distribution patterns dekhe
-- Churn ke saath correlation trends identify kiye (jaise month-to-month contracts aur fiber optic users mein churn zyada dikha)
-- Ye patterns hi baad mein Phase 5 (ML) ke liye feature selection ka base bane
+`notebooks/01_eda_matplotlib_seaborn.ipynb` covers the exploratory analysis:
+- Examined distribution patterns across contract type, tenure, monthly charges, and internet service
+- Identified correlation trends with churn (e.g., higher churn among month-to-month contracts and fiber optic users)
+- These patterns formed the basis for feature selection in Phase 5 (ML)
 
 ---
 
 ## 🤖 Phase 5 — Feature Engineering + ML
 
-`notebooks/02_feature_engineering_ml.ipynb` mein:
-- Categorical features encode kiye, model train kiya
-- Feature importance nikali
-- Model se har customer ke liye **churn probability** predict ki (`churn_predictions.csv` mein saved)
-- Ye churn probability hi Phase 6 (Plotly) aur Phase 7 (Power BI) dono mein reuse hui — model output seedha business dashboard tak pahuncha
+In `notebooks/02_feature_engineering_ml.ipynb`:
+- Encoded categorical features and trained the model
+- Extracted feature importance
+- Predicted **churn probability** for every customer (saved to `churn_predictions.csv`)
+- This churn probability was reused in both Phase 6 (Plotly) and Phase 7 (Power BI) — the model's output flowed directly into the business dashboard
 
 ---
 
 ## 📈 Phase 6 — Plotly Interactive Visuals
 
-`notebooks/03_plotly_interactive_viz.ipynb` mein Phase 5 ki churn probability ko interactive charts mein use kiya — risk segments aur customer-level drill-down ke liye.
+`notebooks/03_plotly_interactive_viz.ipynb` uses the Phase 5 churn probability in interactive charts, for risk segmentation and customer-level drill-down.
 
 ---
 
 ## 📊 Phase 7 — Power BI Dashboard
 
-4-page dark/light themed dashboard, `churn_predictions_full` table (ML model ka output) par based:
+A 4-page dashboard built on the `churn_predictions_full` table (the ML model's output):
 
 **Page 1 — Overview**
 ![Dashboard Page 1](https://github.com/codebyavneesh/telco-customer-churn-analytics/blob/main/churn-prediction-retentional-analysis/images/dashboard_images/dashboard_image1.png)
 - 7K Total Customers, 2K Churned, Churn Rate 0.27
 - Total MRR ₹456.12K, MRR at Risk ₹137.01K
-- Month-to-month contract 55.02% customers ke saath sabse bada segment
-- 0–12 months tenure group mein sabse zyada customers (2.2K) — naye customers ka retention risk sabse zyada
+- Month-to-month contracts are the largest segment at 55.02% of customers
+- The 0–12 month tenure group has the most customers (2.2K) — new customers carry the highest retention risk
 - Churn split: 73.46% No vs 26.54% Yes
 
 **Page 2 — Churn Rate Drivers**
 ![Dashboard Page 2](https://github.com/codebyavneesh/telco-customer-churn-analytics/blob/main/churn-prediction-retentional-analysis/images/dashboard_images/dashboard_image2.png)
-- Month-to-month contract churn rate 0.43, jabki Two-year sirf 0.03 — sabse strong churn driver
-- SeniorCitizen = Yes churn rate 0.42, jabki No sirf 0.24 — almost double
-- Electronic check payment method churn rate sabse zyada (47%)
-- Fiber optic internet service churn rate 0.42 — sabse high internet-service segment
+- Month-to-month contract churn rate is 0.43, versus just 0.03 for two-year contracts — the strongest churn driver
+- SeniorCitizen = Yes churns at 0.42, versus 0.24 for No — almost double
+- Electronic check payment method has the highest churn rate (47%)
+- Fiber optic internet service has the highest churn rate at 0.42
 
 **Page 3 — Segmentation**
 ![Dashboard Page 3](https://github.com/codebyavneesh/telco-customer-churn-analytics/blob/main/churn-prediction-retentional-analysis/images/dashboard_images/dashboard_image3.png)
-- MonthlyCharges ₹81–100 bucket mein sabse zyada customers (1764) — high-charge zone, jahan churn risk bhi zyada
-- Contract distribution aur tenure-wise customer spread ka detailed breakdown
+- The ₹81–100 MonthlyCharges bucket has the most customers (1764) — a high-charge zone where churn risk also runs higher
+- Detailed breakdown of contract distribution and tenure-wise customer spread
 
 **Page 4 — Risk & Financial Impact (ML-driven)**
 ![Dashboard Page 4](https://github.com/codebyavneesh/telco-customer-churn-analytics/blob/main/churn-prediction-retentional-analysis/images/dashboard_images/dashboard_image4.png)
-- Model se nikli churn probability ko business metrics mein convert kiya: **₹137.01K MRR at Risk**, 2K High Risk Customers, 0.30 Revenue Loss %
-- Fiber optic customers ka MRR at Risk sabse zyada (₹0.11M)
-- Customer-level table mein individual churn probability bhi visible — sirf aggregate nahi, per-customer actionable output
+- Converted the model's churn probability into business metrics: **₹137.01K MRR at Risk**, 2K High Risk Customers, 0.30 Revenue Loss %
+- Fiber optic customers have the highest MRR at Risk (₹0.11M)
+- The customer-level table also shows individual churn probability — actionable at the per-customer level, not just in aggregate
 
 ---
 
 ## 📝 Phase 8 — Consolidated Business Insights
 
-- **Contract type sabse strong churn driver hai** — month-to-month customers ka churn rate (0.43) two-year contract customers (0.03) se ~14x zyada hai
-- **Senior citizens almost double rate se churn karte hain** (0.42 vs 0.24) — is segment ke liye targeted retention zaroori
-- **Fiber optic + Electronic check combination highest-risk segment hai** — dono metrics mein individually bhi top pe hai
-- **₹137K MRR currently risk mein hai** high-probability churners ki wajah se
-- **Naye customers (0–12 months tenure) sabse bada at-risk pool hain** — onboarding ke turant baad retention effort zaroori
+- **Contract type is the strongest churn driver** — month-to-month customers churn (0.43) at ~14x the rate of two-year contract customers (0.03)
+- **Senior citizens churn at almost double the rate** (0.42 vs 0.24) — this segment needs targeted retention
+- **Fiber optic + Electronic check is the highest-risk combination** — both metrics individually top the list too
+- **₹137K in MRR is currently at risk** due to high-probability churners
+- **New customers (0–12 months tenure) are the largest at-risk pool** — retention efforts are needed right after onboarding
 
 ### Recommendations
-- Month-to-month customers ko long-term contract ki taraf incentivize karo (discount/loyalty offer)
-- Fiber optic + Electronic check segment ke liye targeted retention campaign chalao
-- Churn probability table (Phase 5 ML output) ke top-N customers ko proactively reach out karo
-- Naye customers (0–12 months) ke liye onboarding-phase retention program design karo
+- Incentivize month-to-month customers toward long-term contracts (discounts/loyalty offers)
+- Run a targeted retention campaign for the Fiber optic + Electronic check segment
+- Proactively reach out to the top-N customers by churn probability (from the Phase 5 ML output)
+- Design an onboarding-phase retention program for new customers (0–12 months)
 
 ---
 
@@ -147,12 +147,12 @@ Cleaned CSV se teen normalized tables banayi aur load ki:
 
 1. `pip install -r requirements.txt`
 2. `python scripts/data_cleaning.py` — Phase 1
-3. `python scripts/load_to_mysql.py` — Phase 2 (MySQL credentials `.env` mein set karo)
-4. `sql/analysis_queries.sql` ko MySQL client mein run karo — Phase 3
-5. `notebooks/01_eda_matplotlib_seaborn.ipynb` run karo — Phase 4
-6. `notebooks/02_feature_engineering_ml.ipynb` run karo — Phase 5 (`churn_predictions.csv` generate hoga)
-7. `notebooks/03_plotly_interactive_viz.ipynb` run karo — Phase 6
-8. `powerbi/telco_churn_dashboard.pbix` open karo, `churn_predictions.csv` ko data source ke roop mein refresh karo — Phase 7
+3. `python scripts/load_to_mysql.py` — Phase 2 (set MySQL credentials in `.env`)
+4. Run `sql/analysis_queries.sql` in a MySQL client — Phase 3
+5. Run `notebooks/01_eda_matplotlib_seaborn.ipynb` — Phase 4
+6. Run `notebooks/02_feature_engineering_ml.ipynb` — Phase 5 (generates `churn_predictions.csv`)
+7. Run `notebooks/03_plotly_interactive_viz.ipynb` — Phase 6
+8. Open `powerbi/telco_churn_dashboard.pbix` and refresh `churn_predictions.csv` as the data source — Phase 7
 
 ---
 
